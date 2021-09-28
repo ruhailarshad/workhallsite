@@ -11,6 +11,7 @@ import {
   TwitterIcon,
 } from "react-share";
 import { Link } from "react-router-dom";
+import ReactHtmlParser from "react-html-parser";
 
 // Loader
 import Loader from "react-loader-spinner";
@@ -39,80 +40,21 @@ export default class BlogPage extends Component {
     loader: true,
     text: "",
   };
-  escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-  }
 
   academyLinkPara = (para) => {
-    const academyKeywords = [
-      "online courses in pakistan",
-      "online courses websites",
-      "online courses with certificates",
-      "how can i learn online",
-      "online education system",
-      "best certified courses in pakistan",
-      "institutes in pakistan for online courses",
-      "online training for",
-      "Online course providers",
-      "online academy",
-      "online institute",
-      "learn wordpress",
-      "learn coding",
-      "learn graphic designing online",
-      "learn python online",
-      "learn swift online",
-      "learn html and css",
-      "learn react native online live online courses",
-      "learn illustrator",
-      "learn photoshop",
-      " live online classes",
-      "online classes on zoom",
-      "online education",
-      " online course viewer",
-      "online course syllabus",
-      "online learning accessible",
-      " online course creation",
-      "online learning platform",
-      "online learning price",
-      "stay home and learn",
-      "online course list",
-      "online courses",
-      "education gets easy",
-      "learning on your fingertips",
-      "online certified courses",
-      "online courses with certificates",
-      "online learning karachi",
-      "online academy pakistan",
-      "online courses",
-      "online courses pakistan",
-      "online course catalogue",
-      "online learning tips",
-      "online learning vs class learning",
-      "online learning covid",
-      "learn online during pandemic",
-      "learn web development online",
-      "online web development course",
-      "online public speaking course",
-      "online design courses",
-      "online web designing courses",
-      "online learning benefits",
-      "learn design in 8 weeks",
-      "learn public speaking in 3 weeks",
-      "online learning initiative",
-      "online learning vs pandemic",
-      "Elearning",
+    const words = [
       "Work Hall",
-      "co-working spaces",
       "co-space",
-      "shared office spaces",
       "shared office space",
+      "shared office spaces",
       "shared work space",
-      "coworking spaces",
-      "coworking space",
+      "co-working spaces",
       "Coworking Spaces",
       "Coworking spaces",
+      "coworking spaces",
+      "coworking space",
+      "Coworking space",
     ];
-
     const finalVal = [];
     if (para.includes(":")) {
       const findingIndex = para.split("").indexOf(":");
@@ -120,75 +62,24 @@ export default class BlogPage extends Component {
     } else {
       finalVal.push(para);
     }
-    const final = academyKeywords.reduce(
-      (prev, word) => {
-        const newWords = [];
-        const reg = new RegExp(this.escapeRegExp(word), "gi");
-        let index;
-        console.log(prev);
-        prev.forEach((e) => {
-          // Only match for element which is string, if it is not string,
-          // it's already processed(like span or something)
+    // const theRegex =
+    //   /\b(Work Hall|co-working spaces|co-space|shared office space|shared office space|shared work space|coworking spaces|Coworking spaces|Coworking Spaces)\b/g;
+    words.forEach((values) => {
+      console.log(values);
+      if (finalVal[0][1].includes(":")) {
+        finalVal[0][1] = finalVal[0][1].replace(
+          values,
+          "<a href='https://www.workhall.co'>" + values + "</a>"
+        );
+      } else {
+        finalVal[0] = finalVal[0].replace(
+          values,
+          "<a href='https://www.workhall.co'>" + values + "</a>"
+        );
+      }
+    });
 
-          if (typeof e === "string") {
-            const wordLength = word.length;
-            let matched = false;
-
-            do {
-              const { index } = reg.exec(e) || {};
-
-              // Keep matching till no more matches found
-              if (index !== undefined) {
-                newWords.push(e.substr(0, index));
-
-                // You can also directly use span here instead of React.createElement
-                // const h = e.split(":");
-                // if (h.length > 1) {
-                //   newWords.push(
-                //     <h1>{e.split(":")[0].substr(index + wordLength)}</h1>
-                //   );
-                // }
-                if (
-                  e.substr(index, wordLength) == "Work Hall" ||
-                  e.substr(index, wordLength) == "co-working spaces" ||
-                  e.substr(index, wordLength) == "co-space" ||
-                  e.substr(index, wordLength) == "shared office spaces" ||
-                  e.substr(index, wordLength) == "shared office space" ||
-                  e.substr(index, wordLength) == "shared work space" ||
-                  e.substr(index, wordLength) == "coworking spaces" ||
-                  e.substr(index, wordLength) == "Coworking spaces" ||
-                  e.substr(index, wordLength) == "Coworking Spaces"
-                ) {
-                  newWords.push(
-                    <a href="https://www.workhall.co">
-                      {e.substr(index, wordLength)}
-                    </a>
-                  );
-                } else {
-                  newWords.push(
-                    <a href="https://www.workhall.co/academy">
-                      {e.substr(index, wordLength)}
-                    </a>
-                  );
-                }
-                newWords.push(e.substr(index + wordLength));
-
-                matched = true;
-              }
-            } while (index);
-            if (!matched) {
-              newWords.push(e);
-            }
-          } else {
-            newWords.push(e);
-          }
-        });
-        return newWords;
-      },
-      [finalVal[0]]
-    );
-
-    return final;
+    return finalVal;
   };
 
   drawerToggleClickHandler = () => {
@@ -272,20 +163,19 @@ export default class BlogPage extends Component {
                     {data.blog.map((para, i) => {
                       const pa = this.academyLinkPara(para);
                       const index = 1;
-                      console.log(pa);
+
                       if (pa[0][1]?.includes(":")) {
-                        console.log("enter");
                         return (
                           <p>
                             <span
                               style={{ fontWeight: "bold" }}
                             >{`${pa[0][0]}`}</span>
 
-                            {pa[0][1]}
+                            {ReactHtmlParser(pa[0][1])}
                           </p>
                         );
                       } else {
-                        return <p>{pa}</p>;
+                        return <p>{ReactHtmlParser(pa)}</p>;
                       }
                     })}
                   </div>
