@@ -42,6 +42,7 @@ export default class BlogPage extends Component {
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
   }
+
   academyLinkPara = (para) => {
     const academyKeywords = [
       "online courses in pakistan",
@@ -107,18 +108,28 @@ export default class BlogPage extends Component {
       "shared office space",
       "shared work space",
       "coworking spaces",
+      "coworking space",
       "Coworking Spaces",
       "Coworking spaces",
     ];
+
+    const finalVal = [];
+    if (para.includes(":")) {
+      const findingIndex = para.split("").indexOf(":");
+      finalVal.push([para.split(":")[0], para.slice(findingIndex)]);
+    } else {
+      finalVal.push(para);
+    }
     const final = academyKeywords.reduce(
       (prev, word) => {
         const newWords = [];
         const reg = new RegExp(this.escapeRegExp(word), "gi");
         let index;
-
+        console.log(prev);
         prev.forEach((e) => {
           // Only match for element which is string, if it is not string,
           // it's already processed(like span or something)
+
           if (typeof e === "string") {
             const wordLength = word.length;
             let matched = false;
@@ -131,12 +142,12 @@ export default class BlogPage extends Component {
                 newWords.push(e.substr(0, index));
 
                 // You can also directly use span here instead of React.createElement
-                const h = e.split(":");
-                if (h.length > 1) {
-                  newWords.push(
-                    <h1>{e.split(":")[0].substr(index + wordLength)}</h1>
-                  );
-                }
+                // const h = e.split(":");
+                // if (h.length > 1) {
+                //   newWords.push(
+                //     <h1>{e.split(":")[0].substr(index + wordLength)}</h1>
+                //   );
+                // }
                 if (
                   e.substr(index, wordLength) == "Work Hall" ||
                   e.substr(index, wordLength) == "co-working spaces" ||
@@ -144,9 +155,8 @@ export default class BlogPage extends Component {
                   e.substr(index, wordLength) == "shared office spaces" ||
                   e.substr(index, wordLength) == "shared office space" ||
                   e.substr(index, wordLength) == "shared work space" ||
-                  e.substr(index, wordLength) == "coworking spaces"
-                  ||
-                  e.substr(index, wordLength) == "Coworking spaces"||
+                  e.substr(index, wordLength) == "coworking spaces" ||
+                  e.substr(index, wordLength) == "Coworking spaces" ||
                   e.substr(index, wordLength) == "Coworking Spaces"
                 ) {
                   newWords.push(
@@ -175,12 +185,12 @@ export default class BlogPage extends Component {
         });
         return newWords;
       },
-      [para]
+      [finalVal[0]]
     );
-    console.log(final);
 
     return final;
   };
+
   drawerToggleClickHandler = () => {
     this.setState((prevState) => {
       return { sideDrawerOpen: !prevState.sideDrawerOpen };
@@ -261,7 +271,22 @@ export default class BlogPage extends Component {
                   <div class="blog-paras">
                     {data.blog.map((para, i) => {
                       const pa = this.academyLinkPara(para);
-                      return <p>{pa}</p>;
+                      const index = 1;
+                      console.log(pa);
+                      if (pa[0][1]?.includes(":")) {
+                        console.log("enter");
+                        return (
+                          <p>
+                            <span
+                              style={{ fontWeight: "bold" }}
+                            >{`${pa[0][0]}`}</span>
+
+                            {pa[0][1]}
+                          </p>
+                        );
+                      } else {
+                        return <p>{pa}</p>;
+                      }
                     })}
                   </div>
                   <div class="b-colors-div">

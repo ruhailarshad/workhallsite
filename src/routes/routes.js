@@ -19,6 +19,7 @@ import {
   CFOPage,
   MerchProduct,
 } from "./index";
+import AppSignUpPage from "../components/AppSignUpPage";
 
 let Routes = () => {
   return (
@@ -32,7 +33,7 @@ let Routes = () => {
         <Route path="/academy/:id" exact component={EnrollNowPage} />
         <Route path="/merch" exact component={MerchPage} />
         <Route path="/merch/:id" exact component={MerchProduct} />
-
+        <Route path="/app_signup" exact component={AppSignUpPage} />
         {/* <Route path="/academy/register" component={AcademyRegisterPage} /> */}
         <Route path="/payment" component={PaymentPage} />
         <Route path="/blogs/:id" component={BlogPage} />
